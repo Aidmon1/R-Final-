@@ -1,0 +1,99 @@
+---
+title: "Final Project Business Analytics and Data Mining"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For my final project, I was given over 10,000 pieces of raw data from Yelp. I had to code and model the information into actionable steps for restaurants to take in order to increase customer retention rate.
+
+1- Check data using R for inaccuracies, problematic columns. Please write down your findings. Provide your code.
+
+2- Repair the data and/or impute the data using R. Explain steps, provide your code in R.
+
+3- Construct the following Analytical Dashboard using the R packages of "shiny" and/or ggplot2.
+
+4- Explain your findings in this study. What useful business insights are acquired from the proposal? How does this submitted model benefit (or cost) businesses? What actionable steps are recommended to improve their work?
+
+```{r data}
+myData<-readxl::read_excel("C:\\Users\\aidan\\Desktop\\school\\OSC_4820\\updated_excel_data_for_comp.xlsx.xlsx")
+myData_line <- readxl::read_excel("C:\\Users\\aidan\\Desktop\\school\\OSC_4820\\myData_line.xlsx")
+
+```
+
+### Chart A
+
+```{r}
+library(ggplot2)
+myData_histogram=data.frame(value=rnorm(100))
+  ggplot(myData, aes(x=rating)) +
+  geom_histogram( binwidth=1, fill="#69b3a2", color="#e9ecef", alpha=0.9) +
+  ggtitle("Frequency of Ratings") +
+  theme(
+    plot.title = element_text(size=15)
+  )
+```
+
+### Chart B
+
+```{r}
+library(RColorBrewer)
+myPalette <- brewer.pal(9,"Set1")
+x<- c(1.40,2.46,5.67,7.58,12.1,18.5,27.8,17.0,7.57)
+pie(x,labels = paste0(x, "%"), border="black", col=myPalette, main = "Percent of Ratings")
+legend("topleft", legend = c ("1","1.5","2","2.5","3","3.5","4","4.5","5"),cex=1.0,fill=myPalette)
+```
+
+### Chart C
+
+```{r}
+myTable <- table(myData$price, myData$rating)
+myTable <- as.matrix(myTable)
+
+heatmap(myTable, Colv = NA, Rowv = NA, col = heat.colors(256),
+        xlab="RATING", ylab="PRICE", main="Reviews v Price")
+
+
+```
+
+### Chart D
+
+```{r}
+library(ggplot2)
+
+rating <- myData_line$rating
+averaged.review_count <- myData_line$averaged.review_count
+myData_line <- data.frame(rating,averaged.review_count)
+ggplot(myData_line, aes(x=rating, y=averaged.review_count))+
+  geom_line( color="blue", size=2, alpha=0.9, linetype=1)+
+  xlim(1,5)+
+  ggtitle("Rating v Avg Review Count")
+```
+
+### Chart E
+
+```{r}
+
+# Library
+library(fmsb)
+myData_radar<-data.frame(delivery=c(4,3,3.4),
+                         pickup=c(4,3,3.8),
+                         sitdown=c(4,3,3.7),
+                         restaurant_reservation=c(4,3,3.8))
+#myData_radar <- rbind(rep(20,5) , rep(0,5) , myData_radar)
+radarchart(myData_radar, 
+           seg=4,
+           title= "Avg Transaction Rating",
+          axistype=1 , 
+#custom polygon
+pcol=rgb(0.2,0.5,0.5,0.9) , pfcol=rgb(0.2,0.5,0.5,0.5) , plwd=4 , plty=1,
+#custom the grid
+cglcol="black", cglty=1, axislabcol="grey", caxislabels=seq(3,4,0.25))#, #cglwd=0.8,
+#custom labels
+#vlcex=0.8 
+#)
+
+```
